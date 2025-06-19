@@ -22,7 +22,7 @@ const Navbar = () => {
       <div className="container mx-auto px-4 py-3 flex justify-between items-center">
         {/* Logo */}
         <Link href={"/"}>
-          <div className="text-2xl font-bold text-green-500">MyApp</div>
+          <div className="text-2xl font-bold text-violet-500">MyApp</div>
         </Link>
 
         {/* Nav Links */}
@@ -31,8 +31,8 @@ const Navbar = () => {
             <li key={item.path}>
               <Link
                 href={item.path}
-                className={`hover:text-green-600 transition-colors duration-200 font-semibold ${
-                  pathname === item.path ? "text-green-600" : ""
+                className={`hover:text-violet-600 transition-colors duration-200 font-semibold ${
+                  pathname === item.path ? "text-violet-600" : ""
                 }`}
               >
                 {item.name}
