@@ -16,6 +16,8 @@ import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Eye, EyeOff } from "lucide-react";
+import Image from "next/image";
+import { assets } from "@/assets/assets";
 
 // Schema validation
 const loginSchema = z.object({
@@ -27,6 +29,7 @@ type LoginFormValues = z.infer<typeof loginSchema>;
 
 const LoginForm = () => {
   const [isShow, setIsShow] = React.useState(false);
+
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
@@ -40,20 +43,33 @@ const LoginForm = () => {
   };
 
   return (
-    <div className="max-w-md w-full mx-auto mt-12 p-6 shadow-xl rounded-2xl bg-white border border-gray-100">
-      <h1 className="text-3xl font-bold text-center text-violet-600 mb-6">
-        Login to Your Account
-      </h1>
+    <div className="max-w-md w-full mx-auto mt-16 px-6 py-8 rounded-2xl shadow-xl border bg-white">
+      {/* Header */}
+      <div className="flex flex-col items-center mb-8">
+        <Link href={"/"}>
+          <Image
+            src={assets.logo}
+            alt="Logo"
+            width={64}
+            height={64}
+            className="mb-4"
+          />
+        </Link>
+        <h1 className="text-2xl font-bold text-violet-700">
+          Login to Your Account
+        </h1>
+      </div>
 
+      {/* Form */}
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
           {/* Email Field */}
           <FormField
             control={form.control}
             name="email"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Email</FormLabel>
+                <FormLabel className="text-sm font-medium">Email</FormLabel>
                 <FormControl>
                   <Input
                     type="email"
@@ -67,13 +83,13 @@ const LoginForm = () => {
             )}
           />
 
-          {/* Password Field with Toggle */}
+          {/* Password Field */}
           <FormField
             control={form.control}
             name="password"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Password</FormLabel>
+                <FormLabel className="text-sm font-medium">Password</FormLabel>
                 <FormControl>
                   <div className="relative">
                     <Input
@@ -85,7 +101,7 @@ const LoginForm = () => {
                     <button
                       type="button"
                       onClick={() => setIsShow(!isShow)}
-                      className="absolute top-1/2 right-3 -translate-y-1/2 text-gray-500 hover:text-violet-600"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-violet-600"
                       tabIndex={-1}
                     >
                       {isShow ? <EyeOff size={18} /> : <Eye size={18} />}
@@ -97,10 +113,20 @@ const LoginForm = () => {
             )}
           />
 
+          {/* Forget Password */}
+          <div className="text-right">
+            <Link
+              href="/resetPassword"
+              className="text-sm text-violet-600 hover:underline"
+            >
+              Forgot password?
+            </Link>
+          </div>
+
           {/* Submit Button */}
           <Button
             type="submit"
-            className="w-full bg-violet-600 hover:bg-violet-700 text-white"
+            className="w-full bg-violet-600 hover:bg-violet-700 text-white font-semibold py-2 rounded-md"
           >
             Login
           </Button>
@@ -108,9 +134,12 @@ const LoginForm = () => {
       </Form>
 
       {/* Footer */}
-      <p className="text-center text-sm text-gray-600 mt-4">
+      <p className="text-center text-sm text-gray-600 mt-5">
         Don&apos;t have an account?{" "}
-        <Link href="/register" className="text-violet-600 hover:underline font-medium">
+        <Link
+          href="/register"
+          className="text-violet-600 font-medium hover:underline"
+        >
           Register here
         </Link>
       </p>
