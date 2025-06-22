@@ -17,7 +17,7 @@ export const register = async (data: FieldValues) => {
       }
     );
     const json = await res.json();
-    (await cookies()).set("token", json.token);
+    (await cookies()).set("token", json.data.token);
     return json;
   } catch (error: any) {
     return Error(error);
@@ -34,7 +34,7 @@ export const login = async (data: FieldValues) => {
       body: JSON.stringify(data),
     });
     const json = await res.json();
-    (await cookies()).set("token", json.token);
+    (await cookies()).set("token", json.data.token);
     return json;
   } catch (error: any) {
     return Error(error);
@@ -71,6 +71,7 @@ export const getUser = async () => {
         "Content-Type": "application/json",
         Authorization: `Bearer ${(await cookies()).get("token")?.value}`,
       },
+      credentials: "include",
     });
     const json = await res.json();
     return json;
