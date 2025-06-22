@@ -15,7 +15,12 @@ import React from "react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, Loader } from "lucide-react";
+import Image from "next/image";
+import { assets } from "@/assets/assets";
+import { register } from "@/services/auth";
+import { toast } from "sonner";
+import { useUser } from "@/context/AppContext";
 
 // Validation schema
 const registerSchema = z.object({
@@ -28,6 +33,7 @@ type RegisterFormValues = z.infer<typeof registerSchema>;
 
 const RegisterForm = () => {
   const [isShow, setIsShow] = React.useState(false);
+  const { setLoading } = useUser();
 
   const form = useForm<RegisterFormValues>({
     resolver: zodResolver(registerSchema),
@@ -38,16 +44,37 @@ const RegisterForm = () => {
     },
   });
 
-  const onSubmit = (data: RegisterFormValues) => {
-    console.log("Form submitted:", data);
-    // handle registration logic here
+  const onSubmit = async (data: RegisterFormValues) => {
+    try {
+      const res = await register(data);
+      console.log(res);
+      if (res?.success) {
+        toast.success(res?.message);
+        setLoading(true);
+      } else {
+        toast.error(res?.message);
+      }
+    } catch (error: any) {
+      console.log(error);
+    }
   };
 
   return (
     <div className="max-w-md w-full mx-auto mt-14 p-8 rounded-2xl shadow-xl border border-gray-200 bg-white">
-      <h2 className="text-3xl font-semibold text-center text-violet-600 mb-6">
-        Create an Account
-      </h2>
+      <div className="flex flex-col items-center mb-8">
+        <Link href={"/"}>
+          <Image
+            src={assets.logo}
+            alt="Logo"
+            width={64}
+            height={64}
+            className="mb-4"
+          />
+        </Link>
+        <h1 className="text-2xl font-bold text-violet-700">
+          Create an Account
+        </h1>
+      </div>
 
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
@@ -126,7 +153,11 @@ const RegisterForm = () => {
             type="submit"
             className="w-full bg-violet-600 hover:bg-violet-700 text-white"
           >
-            Register
+            {form.formState.isSubmitting ? (
+              <Loader className="animate-spin size-6" />
+            ) : (
+              "Register"
+            )}
           </Button>
         </form>
       </Form>

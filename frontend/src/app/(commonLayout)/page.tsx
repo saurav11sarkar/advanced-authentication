@@ -6,7 +6,9 @@ import { Button } from "@/components/ui/button";
 import { useUser } from "@/context/AppContext";
 
 const HomePage = () => {
-  const {user} = useUser();
+  const { user } = useUser();
+  console.log(user);
+
   return (
     <section className="flex flex-col items-center justify-center min-h-screen px-4 py-10 gap-6 text-center bg-white ">
       {/* Header Image */}
@@ -49,7 +51,7 @@ const HomePage = () => {
       <Button className="mt-2 px-6 py-2 rounded-full text-base">
         Get Started
       </Button>
-      <p>{user?.name|| "hi"}</p>
+      <p>{user?.name || "hi"}</p>
     </section>
   );
 };

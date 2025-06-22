@@ -21,7 +21,6 @@ export const AppContextProvider = ({ children }: { children: ReactNode }) => {
   const [loading, setLoading] = useState<boolean>(true);
   const [user, setUser] = useState<any>(null);
 
-  // You can use this to auto-fetch user info or auth check
   useEffect(() => {
     const getUserLogin = async () => {
       const res = await getUser();
@@ -41,7 +40,7 @@ export const AppContextProvider = ({ children }: { children: ReactNode }) => {
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
 };
 
-// Custom hook for accessing the context
+
 export const useUser = () => {
   const context = useContext(AppContext);
   if (context === undefined) {

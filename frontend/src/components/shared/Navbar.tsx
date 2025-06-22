@@ -1,11 +1,15 @@
 "use client";
+
 import React from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import Image from "next/image";
 import logo from "../../assets/logo.svg";
 import { Button } from "../ui/button";
 import { ArrowRight } from "lucide-react";
+import { useUser } from "@/context/AppContext";
+import { logout } from "@/services/auth";
+import { toast } from "sonner";
 
 interface NavbarProps {
   name: string;
@@ -20,13 +24,27 @@ const navbar: NavbarProps[] = [
 
 const Navbar = () => {
   const pathname = usePathname();
+  const router = useRouter();
+  const { user, setUser, setLoading } = useUser();
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+      setUser(null);
+      setLoading(true);
+      toast.success("Logged out successfully");
+      router.push("/login");
+    } catch (error: any) {
+      console.log(error);
+    }
+  };
 
   return (
     <nav className="fixed top-0 left-0 w-full z-50 bg-white border-b border-gray-200 shadow-sm">
       <div className="container mx-auto px-4 py-4 flex justify-between items-center">
         {/* Logo */}
         <Link href="/">
-          <div className="flex items-center">
+          <div className="flex items-center cursor-pointer">
             <Image
               src={logo}
               alt="Logo"
@@ -34,7 +52,6 @@ const Navbar = () => {
               height={100}
               className="object-contain"
             />
-            {/* <span className="text-xl font-bold text-violet-600">MyApp</span> */}
           </div>
         </Link>
 
@@ -55,16 +72,23 @@ const Navbar = () => {
             ))}
           </ul>
 
-          {/* Login Button */}
-          <Button className="rounded-full px-5 py-2">
-            <Link
-              href="/login"
-              className="flex items-center gap-2 text-sm font-medium"
+          {/* Auth Button */}
+          {user ? (
+            <Button
+              className="rounded-full px-5 py-2 text-sm font-medium"
+              onClick={handleLogout}
             >
-              <span>Login</span>
-              <ArrowRight className="w-4 h-4" />
+              <span>Logout</span>
+              <ArrowRight className="w-4 h-4 ml-2" />
+            </Button>
+          ) : (
+            <Link href="/login">
+              <Button className="rounded-full px-5 py-2 text-sm font-medium">
+                <span>Login</span>
+                <ArrowRight className="w-4 h-4 ml-2" />
+              </Button>
             </Link>
-          </Button>
+          )}
         </div>
       </div>
     </nav>

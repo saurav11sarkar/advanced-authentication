@@ -15,9 +15,13 @@ import React from "react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, Loader } from "lucide-react";
 import Image from "next/image";
 import { assets } from "@/assets/assets";
+import { login } from "@/services/auth";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
+import { useUser } from "@/context/AppContext";
 
 // Schema validation
 const loginSchema = z.object({
@@ -29,6 +33,8 @@ type LoginFormValues = z.infer<typeof loginSchema>;
 
 const LoginForm = () => {
   const [isShow, setIsShow] = React.useState(false);
+  const router = useRouter();
+  const { setLoading } = useUser();
 
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
@@ -38,8 +44,20 @@ const LoginForm = () => {
     },
   });
 
-  const onSubmit = (data: LoginFormValues) => {
-    console.log("Form submitted:", data);
+  const onSubmit = async (data: LoginFormValues) => {
+    try {
+      const res = await login(data);
+      if (res?.success) {
+        toast.success(res.message || "Login successful");
+        form.reset();
+        router.push("/");
+        setLoading(true);
+      } else {
+        toast.error(res?.message || "Login failed");
+      }
+    } catch (error: any) {
+      toast.error(error?.message || "Something went wrong");
+    }
   };
 
   return (
@@ -127,8 +145,13 @@ const LoginForm = () => {
           <Button
             type="submit"
             className="w-full bg-violet-600 hover:bg-violet-700 text-white font-semibold py-2 rounded-md"
+            disabled={form.formState.isSubmitting}
           >
-            Login
+            {form.formState.isSubmitting ? (
+              <Loader className="animate-spin size-6" />
+            ) : (
+              "Login"
+            )}
           </Button>
         </form>
       </Form>
